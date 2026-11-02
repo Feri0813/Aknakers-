@@ -1,0 +1,165 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: #151515;
+    background-image:
+        linear-gradient(rgba(0, 255, 100, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 100, 0.025) 1px, transparent 1px);
+    background-size: 4px 4px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    font-family: 'Press Start 2P', monospace;
+    color: #00ff66;
+}
+
+h1 {
+    font-size: 30px;
+    color: #00ff66;
+    text-shadow: 0 0 8px #00ff66;
+    margin-bottom: 35px;
+    text-align: center;
+}
+
+#info {
+    background-color: #222;
+    border: 3px solid #00ff66;
+    box-shadow: 0 0 12px rgba(0, 255, 102, 0.3);
+    padding: 18px 25px;
+    margin-bottom: 20px;
+
+    font-size: 11px;
+    color: #00ff66;
+}
+#tabla {
+    display: grid;
+    grid-template-columns: repeat(10, 42px);
+    grid-template-rows: repeat(10, 42px);
+
+    gap: 3px;
+    padding: 10px;
+
+    background-color: #202020;
+    border: 4px solid #00ff66;
+    box-shadow: 0 0 20px rgba(0, 255, 102, 0.2);
+}
+
+.mezo {
+    width: 42px;
+    height: 42px;
+
+    background-color: #444;
+    border: 3px outset #777;
+
+    color: #00ff66;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 15px;
+
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+}
+
+.mezo:hover:not(.felfedett) {
+    background-color: #555;
+}
+
+.mezo.felfedett {
+    background-color: #222;
+    border: 1px solid #555;
+    cursor: default;
+}
+
+.mezo.Akna {
+    background-color: #a00000;
+    border: 1px solid #ff3333;
+}
+
+.mezo img {
+    width: 75%;
+    height: 75%;
+    object-fit: contain;
+}
+
+.mezo.zaszlo {
+    background-color: #333;
+}
+
+#uzenet {
+    margin-top: 25px;
+    margin-bottom: 20px;
+
+    font-size: 11px;
+    text-align: center;
+    color: #00ff66;
+
+    text-shadow: 0 0 6px #00ff66;
+}
+
+#u-jatek {
+    padding: 15px 25px;
+
+    background-color: #444;
+    color: #00ff66;
+
+    border: 3px outset #888;
+
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+
+    cursor: pointer;
+}
+
+#u-jatek:hover {
+    background-color: #555;
+    box-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
+}
+
+#u-jatek:active {
+    border-style: inset;
+    transform: translateY(2px);
+}
+
+@media (max-width: 500px) {
+    h1 {
+        font-size: 19px;
+    }
+
+    #tabla {
+        grid-template-columns: repeat(10, 30px);
+        grid-template-rows: repeat(10, 30px);
+        gap: 2px;
+        padding: 6px;
+    }
+
+    .mezo {
+        width: 30px;
+        height: 30px;
+        font-size: 10px;
+    }
+
+    #info {
+        font-size: 8px;
+        padding: 12px;
+    }
+
+    #uzenet {
+        font-size: 9px;
+    }
+
+    #u-jatek {
+        font-size: 8px;
+    }
+}

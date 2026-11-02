@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Aknakereső</title>
+</head>
+<body>
+    
+</body>
+</html>
+<script>
+const meret = 10;
+const aknakSzama = 15;
+
+let tabla = [];
+let jatekVege = false;
+let felfedettMezok = 0;
+let zaszlokSzama = 0;
+
+document.body.innerHTML = `
+    <h1>Aknakereső</h1>
+
+    <div id="info">
+        <span id="aknak">Akna: ${aknakSzama}</span>
+        &nbsp; | &nbsp;
+        <span id="zaszlok">Zászlók: 0</span>
+    </div>
+
+    <div id="tabla"></div>
+
+    <div id="uzenet">Kerüld el az aknákat!</div>
+
+    <button id="u-jatek">Új játék</button>
+`;
+
+function ujJatek() {
+    tabla = [];
+    jatekVege = false;
+    felfedettMezok = 0;
+    zaszlokSzama = 0;
+
+    document.getElementById("uzenet").textContent =
+        "Kerüld el az aknákat!";
+
+    document.getElementById("zaszlok").textContent =
+        "Zászlók: 0";
+
+    const tablaElem = document.getElementById("tabla");
+    tablaElem.innerHTML = "";
+
+    for (let sor = 0; sor < meret; sor++) {
+        tabla[sor] = [];
+
+        for (let oszlop = 0; oszlop < meret; oszlop++) {
+            tabla[sor][oszlop] = {
+                akna: false,
+                szomszedok: 0,
+                felfedve: false,
+                zaszlo: false
+            };
+        }
+    }
+
+    let elhelyezettAknak = 0;
+
+    while (elhelyezettAknak < aknakSzama) {
+        const sor = Math.floor(Math.random() * meret);
+        const oszlop = Math.floor(Math.random() * meret);
+
+        if (!tabla[sor][oszlop].akna) {
+            tabla[sor][oszlop].akna = true;
+            elhelyezettAknak++;
+        }
+    }
+
+    for (let sor = 0; sor < meret; sor++) {
+        for (let oszlop = 0; oszlop < meret; oszlop++) {
+
+            if (!tabla[sor][oszlop].akna) {
+                tabla[sor][oszlop].szomszedok =
+                    aknakSzamaKornyeken(sor, oszlop);
+            }
+        }
+    }
+
+    for (let sor = 0; sor < meret; sor++) {
+        for (let oszlop = 0; oszlop < meret; oszlop++) {
+
+            const mezo = document.createElement("button");
+
+            mezo.className = "mezo";
+
+            mezo.addEventListener("click", function () {
+                felfedes(sor, oszlop);
+            });
+
+            mezo.addEventListener("contextmenu", function (event) {
+                event.preventDefault();
+                zaszloElhelyezese(sor, oszlop);
+            });
+
+            tablaElem.appendChild(mezo);
+        }
+    }
+}
+
+function aknakSzamaKornyeken(sor, oszlop) {
+    let db = 0;
+
+    for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
+
+            const ujSor = sor + i;
+            const ujOszlop = oszlop + j;
+
+            if (
+                ujSor >= 0 &&
+                ujSor < meret &&
+                ujOszlop >= 0 &&
+                ujOszlop < meret
+            ) {
+                if (tabla[ujSor][ujOszlop].akna) {
+                    db++;
+                }
+            }
+        }
+    }
+
+    return db;
+}
+
+function felfedes(sor, oszlop) {
+    if (jatekVege) return;
+
+    const mezo = tabla[sor][oszlop];
+
+    if (mezo.felfedve || mezo.zaszlo) return;
+
+    mezo.felfedve = true;
+    felfedettMezok++;
+
+    const index = sor * meret + oszlop;
+    const gomb = document.getElementById("tabla").children[index];
+
+    gomb.classList.add("felfedett");
+
+    if (mezo.akna) {
+        gomb.innerHTML = "<img src='500_F_598291455_xJxpST4EZ4B8BKOCNshJczB8eUmF8ef5.jpg' alt='Akna'>";
+        gomb.classList.add("Akna");
+
+        vesztes();
+        return;
+    }
+
+    if (mezo.szomszedok > 0) {
+        gomb.textContent = mezo.szomszedok;
+
+        const szinek = [
+            "#2980b9", "#27ae60", "#e74c3c",
+            "#8e44ad", "#d35400", "#16a085",
+            "#2c3e50", "#7f8c8d"
+        ];
+
+        gomb.style.color = szinek[mezo.szomszedok];
+    } else {
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+
+                const ujSor = sor + i;
+                const ujOszlop = oszlop + j;
+
+                if (
+                    ujSor >= 0 &&
+                    ujSor < meret &&
+                    ujOszlop >= 0 &&
+                    ujOszlop < meret
+                ) {
+                    felfedes(ujSor, ujOszlop);
+                }
+            }
+        }
+    }
+
+    gyozelemEllenorzese();
+}
+
+function zaszloElhelyezese(sor, oszlop) {
+    if (jatekVege) return;
+
+    const mezo = tabla[sor][oszlop];
+
+    if (mezo.felfedve) return;
+
+    mezo.zaszlo = !mezo.zaszlo;
+
+    if (mezo.zaszlo) {
+        zaszlokSzama++;
+    } else {
+        zaszlokSzama--;
+    }
+
+    const index = sor * meret + oszlop;
+    const gomb = document.getElementById("tabla").children[index];
+
+    gomb.innerHTML = "<img src='zasz2.jpg' alt='zaszlo'>";
+    gomb.classList.toggle("zaszlo", mezo.zaszlo);
+
+    document.getElementById("zaszlok").textContent =
+        "Zászlók: " + zaszlokSzama;
+}
+
+function vesztes() {
+    jatekVege = true;
+
+    for (let sor = 0; sor < meret; sor++) {
+        for (let oszlop = 0; oszlop < meret; oszlop++) {
+
+            if (tabla[sor][oszlop].akna) {
+                const index = sor * meret + oszlop;
+                const gomb = document.getElementById("tabla").children[index];
+
+                gomb.innerHTML = "<img src='500_F_598291455_xJxpST4EZ4B8BKOCNshJczB8eUmF8ef5.jpg' alt='Akna'>";
+                gomb.classList.add("Akna");
+            }
+        }
+    }
+
+    document.getElementById("uzenet").textContent =
+        "Vesztettél!";
+}
+
+function gyozelemEllenorzese() {
+    if (felfedettMezok === meret * meret - aknakSzama) {
+        jatekVege = true;
+
+        document.getElementById("uzenet").textContent =
+            "Nyertél!";
+    }
+}
+
+document.getElementById("u-jatek").addEventListener("click", ujJatek);
+ujJatek();
+</script>
